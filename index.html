@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Q-Ant Barber | Fix Final</title>
+    <title>Q-Ant Barber | Ultimate System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -21,80 +21,86 @@
 <body class="bg-gray-900 text-white font-sans min-h-screen">
 
     <script>
+        // URL API TERBARU PADUKA SUDAH TERPASANG
         const API_URL = "https://script.google.com/macros/s/AKfycbxB1g5DLvkzvJfp6KbDZ7eYPI08VRBcD0SlOuxwu2lFf_qwoBWv9yj9VEex4BJAul5B/exec";
         const CORRECT_PIN = "1234";
+        let currentPin = "";
         let settings = { layanan: [], pesan: {} };
     </script>
 
     <div id="web-notice" class="hidden notice-flash py-3 px-4 font-black text-center shadow-lg sticky top-0 z-[100] border-b-2 border-amber-600 uppercase italic">
-        <i class="fa-solid fa-bullhorn mr-2"></i> PANGGILAN: <span id="notice-kode">--</span> SILAKAN MASUK!
+        <i class="fa-solid fa-bullhorn mr-2"></i>
+        PANGGILAN: <span id="notice-kode">--</span> SILAKAN MASUK!
     </div>
 
     <div id="page-user" class="page active">
         <header class="p-6 text-center bg-gray-800 shadow-2xl rounded-b-[3rem] border-b-4 border-amber-500">
             <h1 class="text-3xl font-black tracking-widest text-amber-500 uppercase italic">Q-ANT BARBER</h1>
-            <div class="flex justify-around mt-8 gap-4 text-center">
-                <div class="glass p-4 rounded-2xl flex-1 border border-gray-600">
-                    <p class="text-[10px] uppercase text-gray-400 font-bold mb-1">Diproses</p>
+            <div class="flex justify-around mt-8 gap-4">
+                <div class="glass p-4 rounded-2xl flex-1 border border-gray-600 text-center">
+                    <p class="text-[10px] uppercase text-gray-400 font-bold mb-1 tracking-tighter">Sedang Diproses</p>
                     <p id="user-curr" class="text-2xl font-black text-amber-400">--</p>
                 </div>
-                <div class="glass p-4 rounded-2xl flex-1 border border-gray-600">
-                    <p class="text-[10px] uppercase text-gray-400 font-bold mb-1">Antrean</p>
+                <div class="glass p-4 rounded-2xl flex-1 border border-gray-600 text-center">
+                    <p class="text-[10px] uppercase text-gray-400 font-bold mb-1 tracking-tighter">Antrean</p>
                     <p id="user-total" class="text-2xl font-black text-amber-400">--</p>
                 </div>
             </div>
         </header>
         <main class="p-6 space-y-6 max-w-md mx-auto">
             <div class="grid grid-cols-2 gap-4">
-                <button onclick="openModal('antre')" class="bg-amber-500 text-gray-900 font-black p-5 rounded-3xl shadow-lg active:scale-95 uppercase">Antrean</button>
-                <button onclick="openModal('booking')" class="bg-gray-800 border-2 border-amber-500 text-amber-500 font-black p-5 rounded-3xl shadow-lg active:scale-95 uppercase">Booking</button>
+                <button onclick="openModal('antre')" class="bg-amber-500 text-gray-900 font-black p-5 rounded-3xl shadow-lg active:scale-95 transition-all uppercase italic">Ambil Antrean</button>
+                <button onclick="openModal('booking')" class="bg-gray-800 border-2 border-amber-500 text-amber-500 font-black p-5 rounded-3xl shadow-lg active:scale-95 transition-all uppercase italic">Booking</button>
             </div>
-            <div class="flex gap-2">
-                <input id="cek-kode" type="text" placeholder="KODE (A-XXXX)" class="bg-gray-900 border border-gray-600 rounded-2xl px-5 py-4 flex-1 font-bold uppercase focus:outline-none">
-                <button onclick="cekStatus()" class="bg-amber-500 text-gray-900 font-black px-6 rounded-2xl">CEK</button>
-            </div>
-            <div id="status-result" class="hidden mt-4 p-4 bg-gray-900 rounded-2xl border border-amber-500 text-center"><p id="status-text" class="text-sm font-bold text-amber-400"></p></div>
+            <section class="bg-gray-800/50 p-6 rounded-3xl border border-gray-700 shadow-xl">
+                <div class="flex gap-2">
+                    <input id="cek-kode" type="text" placeholder="KODE (A-XXXX)" class="bg-gray-900 border border-gray-600 rounded-2xl px-5 py-4 flex-1 font-bold uppercase focus:outline-none focus:border-amber-500">
+                    <button onclick="cekStatus()" class="bg-amber-500 text-gray-900 font-black px-6 rounded-2xl">CEK</button>
+                </div>
+                <div id="status-result" class="hidden mt-4 p-4 bg-gray-900 rounded-2xl border border-amber-500 text-center"><p id="status-text" class="text-sm font-bold text-amber-400"></p></div>
+            </section>
         </main>
         <footer class="mt-20 p-10 text-center opacity-10"><button onclick="showPage('page-login')">ADMIN</button></footer>
     </div>
 
     <div id="page-dash" class="page p-6">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-amber-500 font-black text-xl uppercase italic underline">Capster Dash</h2>
+            <h2 class="text-amber-500 font-black text-xl italic uppercase italic underline tracking-tighter">Dashboard Capster</h2>
             <button onclick="showPage('page-user')" class="bg-red-500 text-[10px] px-3 py-1 rounded-lg font-bold">LOGOUT</button>
         </div>
         <div class="flex gap-2 mb-6 overflow-x-auto pb-2 border-b border-gray-800">
-            <button onclick="showTab('tab-customer')" class="tab-btn active bg-gray-800 px-6 py-2 rounded-xl text-xs font-bold border-b-2 border-amber-500 uppercase">Customer</button>
-            <button onclick="showTab('tab-layanan')" class="tab-btn bg-gray-800 px-6 py-2 rounded-xl text-xs font-bold border-b-2 border-transparent uppercase">Layanan</button>
-            <button onclick="showTab('tab-pesan')" class="tab-btn bg-gray-800 px-6 py-2 rounded-xl text-xs font-bold border-b-2 border-transparent uppercase">Pesan WA</button>
+            <button onclick="showTab('tab-customer')" class="tab-btn active bg-gray-800 px-6 py-2 rounded-xl text-[10px] font-bold border-b-2 border-amber-500 uppercase">Customer</button>
+            <button onclick="showTab('tab-layanan')" class="tab-btn bg-gray-800 px-6 py-2 rounded-xl text-[10px] font-bold border-b-2 border-transparent uppercase">Layanan</button>
+            <button onclick="showTab('tab-pesan')" class="tab-btn bg-gray-800 px-6 py-2 rounded-xl text-[10px] font-bold border-b-2 border-transparent uppercase">Pesan WA</button>
         </div>
         <div id="tab-customer" class="dash-tab active space-y-4"></div>
         <div id="tab-layanan" class="dash-tab space-y-4">
             <div id="layanan-list-edit" class="space-y-2"></div>
-            <button onclick="addLayananRow()" class="w-full bg-gray-800 border border-dashed border-gray-600 py-3 rounded-xl text-xs">+ Tambah Item</button>
-            <button onclick="saveSettings('layanan')" class="w-full bg-amber-500 text-gray-900 font-black py-4 rounded-2xl text-xs uppercase">Simpan Layanan</button>
+            <button onclick="addLayananRow()" class="w-full bg-gray-800 border border-dashed border-gray-600 py-3 rounded-xl text-[10px] uppercase">+ Tambah Layanan</button>
+            <button onclick="saveSettings('layanan')" class="w-full bg-amber-500 text-gray-900 font-black py-4 rounded-2xl text-xs uppercase">Simpan Daftar Harga</button>
         </div>
         <div id="tab-pesan" class="dash-tab space-y-4">
-            <div id="pesan-list-edit" class="space-y-4 text-xs"></div>
-            <button onclick="saveSettings('pesan')" class="w-full bg-amber-500 text-gray-900 font-black py-4 rounded-2xl text-xs uppercase">Simpan Pesan</button>
+            <div id="pesan-list-edit" class="space-y-4"></div>
+            <button onclick="saveSettings('pesan')" class="w-full bg-amber-500 text-gray-900 font-black py-4 rounded-2xl text-xs uppercase">Simpan Template Pesan</button>
         </div>
     </div>
 
-    <div id="modal-nota" class="fixed inset-0 bg-black/95 hidden z-[100] p-6 items-center justify-center font-sans">
-        <div class="bg-gray-800 w-full max-w-sm rounded-[2.5rem] p-8 border-2 border-green-500 shadow-2xl">
-            <h3 class="text-green-500 font-black text-center mb-6 uppercase italic tracking-widest">Konfirmasi Selesai</h3>
-            <div class="space-y-4">
-                <div id="nota-layanan-paten" class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto"></div>
+    <div id="modal-nota" class="fixed inset-0 bg-black/95 hidden z-[100] p-6 items-center justify-center">
+        <div class="bg-gray-800 w-full max-w-sm rounded-[2.5rem] p-8 border-2 border-green-500 shadow-lg">
+            <h3 class="text-green-500 font-black text-center mb-6 uppercase italic tracking-widest">Selesaikan Sesi</h3>
+            <div class="space-y-4 text-left">
+                <div id="nota-layanan-paten" class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto pr-2"></div>
                 <div class="border-t border-gray-700 pt-4">
-                    <input type="text" id="nota-ops-nama" placeholder="Layanan Manual" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-xs mb-2">
-                    <input type="number" id="nota-ops-harga" placeholder="Harga Manual" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-xs">
+                    <label class="text-[10px] font-bold text-gray-400 block mb-1 uppercase">Layanan Tambahan (Manual)</label>
+                    <input type="text" id="nota-ops-nama" placeholder="Nama Layanan" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-xs mb-2 text-white">
+                    <input type="number" id="nota-ops-harga" placeholder="Harga (Rp)" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-xs text-white">
                 </div>
                 <div class="bg-gray-900 p-5 rounded-2xl text-center border border-gray-700">
-                    <p class="text-[10px] text-gray-400 font-bold uppercase">Total</p>
-                    <p id="nota-total-display" class="text-3xl font-black text-amber-500">Rp 0</p>
+                    <p class="text-[10px] text-gray-400 uppercase font-bold">Total Pembayaran</p>
+                    <p id="nota-total-display" class="text-3xl font-black text-amber-500 font-sans">Rp 0</p>
                 </div>
-                <button onclick="confirmSelesai()" class="w-full bg-green-500 text-gray-900 font-black py-5 rounded-2xl shadow-xl uppercase">Konfirmasi & Kirim WA</button>
-                <button onclick="closeModalNota()" class="w-full text-gray-500 text-[10px] font-bold py-2 uppercase">Batal</button>
+                <button onclick="confirmSelesai()" class="w-full bg-green-500 text-gray-900 font-black py-5 rounded-2xl shadow-xl uppercase active:scale-95 transition-all">Konfirmasi & Kirim Nota WA</button>
+                <button onclick="closeModalNota()" class="w-full text-gray-500 text-[10px] font-bold py-2 uppercase tracking-widest">Batal</button>
             </div>
         </div>
     </div>
@@ -102,25 +108,32 @@
     <div id="modal" class="fixed inset-0 bg-black/90 hidden z-50 p-6 items-center justify-center">
         <div class="bg-gray-800 w-full max-w-sm rounded-[2.5rem] p-8 border-2 border-amber-500 relative">
             <button onclick="closeModal()" class="absolute -top-4 -right-2 bg-amber-500 text-gray-900 w-10 h-10 rounded-full font-black">X</button>
+            <h3 class="text-xl font-black text-amber-500 uppercase mb-8 text-center italic tracking-widest">Formulir</h3>
             <form id="form-order" class="space-y-4">
                 <input type="hidden" id="form-type">
-                <select id="form-tgl" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold text-white uppercase"></select>
-                <input type="text" id="form-nama" required placeholder="NAMA" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold uppercase">
-                <input type="text" id="form-nomor" required placeholder="WHATSAPP" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold">
+                <select id="form-tgl" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold text-white"></select>
+                <input type="text" id="form-nama" required placeholder="NAMA" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold uppercase text-white">
+                <input type="text" id="form-nomor" required placeholder="WHATSAPP (08...)" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold text-white">
                 <div id="booking-extra" class="hidden">
-                    <select id="form-jam" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold">
-                        <option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option>
-                        <option value="16:00">16:00</option><option value="17:00">17:00</option><option value="18:00">18:00</option>
-                        <option value="19:00">19:00</option><option value="20:00">20:00</option><option value="21:00">21:00</option>
+                    <select id="form-jam" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold text-white">
+                        <option value="13:00">13:00</option><option value="13:20">13:20</option><option value="13:40">13:40</option>
+                        <option value="14:00">14:00</option><option value="14:20">14:20</option><option value="14:40">14:40</option>
+                        <option value="15:00">15:00</option><option value="15:20">15:20</option><option value="15:40">15:40</option>
+                        <option value="16:00">16:00</option><option value="16:20">16:20</option><option value="16:40">16:40</option>
+                        <option value="17:00">17:00</option><option value="17:20">17:20</option><option value="17:40">17:40</option>
+                        <option value="18:00">18:00</option><option value="18:20">18:20</option><option value="18:40">18:40</option>
+                        <option value="19:00">19:00</option><option value="19:20">19:20</option><option value="19:40">19:40</option>
+                        <option value="20:00">20:00</option><option value="20:20">20:20</option><option value="20:40">20:40</option>
+                        <option value="21:00">21:00</option>
                     </select>
                 </div>
-                <button type="submit" id="btn-submit" class="w-full bg-amber-500 text-gray-900 font-black py-5 rounded-2xl uppercase italic">Daftar</button>
+                <button type="submit" id="btn-submit" class="w-full bg-amber-500 text-gray-900 font-black py-5 rounded-2xl uppercase italic">Daftar Sekarang</button>
             </form>
         </div>
     </div>
 
     <div id="page-login" class="page p-6 pt-20">
-        <div class="max-w-xs mx-auto text-center"><div class="flex justify-center gap-4 mb-10"><div id="dot1" class="w-4 h-4 rounded-full border-2 border-amber-500"></div><div id="dot2" class="w-4 h-4 rounded-full border-2 border-amber-500"></div><div id="dot3" class="w-4 h-4 rounded-full border-2 border-amber-500"></div><div id="dot4" class="w-4 h-4 rounded-full border-2 border-amber-500"></div></div><div class="grid grid-cols-3 gap-4"><script>for(let i=1; i<=9; i++) document.write(`<button onclick="pressPin('${i}')" class="numpad-btn">${i}</button>`);</script><button onclick="clearPin()" class="text-red-500 font-bold">CLR</button><button onclick="pressPin('0')" class="numpad-btn">0</button><button onclick="showPage('page-user')" class="text-gray-500 font-bold">ESC</button></div></div>
+        <div class="max-w-xs mx-auto text-center"><div class="flex justify-center gap-4 mb-10"><div id="dot1" class="w-4 h-4 rounded-full border-2 border-amber-500"></div><div id="dot2" class="w-4 h-4 rounded-full border-2 border-amber-500"></div><div id="dot3" class="w-4 h-4 rounded-full border-2 border-amber-500"></div><div id="dot4" class="w-4 h-4 rounded-full border-2 border-amber-500"></div></div><div class="grid grid-cols-3 gap-4"><script>for(let i=1; i<=9; i++) document.write(`<button onclick="pressPin('${i}')" class="numpad-btn">${i}</button>`);</script><button onclick="clearPin()" class="text-red-500 font-bold text-sm">CLR</button><button onclick="pressPin('0')" class="numpad-btn">0</button><button onclick="showPage('page-user')" class="text-gray-500 font-bold text-sm uppercase">ESC</button></div></div>
     </div>
 
     <script>
@@ -130,18 +143,28 @@
 
         window.onload = () => { fetchData(); loadSettings(); setInterval(fetchData, 5000); };
 
-        function showPage(p) { document.querySelectorAll('.page').forEach(x => x.classList.remove('active')); document.getElementById(p).classList.add('active'); if(p==='page-dash') loadDash(); }
-        function showTab(t) { document.querySelectorAll('.dash-tab').forEach(x => x.classList.remove('active')); document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active', 'border-amber-500')); document.getElementById(t).classList.add('active'); event.currentTarget.classList.add('active', 'border-amber-500'); }
+        function showPage(pageId) { 
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); 
+            document.getElementById(pageId).classList.add('active'); 
+            if(pageId === 'page-dash') loadDash(); 
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active', 'border-amber-500'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active', 'border-amber-500');
+        }
 
         function fetchData() {
             fetch(`${API_URL}?action=getJadwal&tanggal=${getTgl(0)}`).then(r => r.json()).then(data => {
-                const total = data.filter(d => ['Antre','Booking'].includes(d['Status Slot'])).length;
                 const active = data.find(d => d['Status Slot'] === 'Diproses');
+                const total = data.filter(d => ['Antre','Booking'].includes(d['Status Slot'])).length;
                 document.getElementById('user-total').innerText = total;
                 document.getElementById('user-curr').innerText = active ? active['Kode'] : '--';
                 const notice = document.getElementById('web-notice');
                 if(active) { notice.classList.remove('hidden'); document.getElementById('notice-kode').innerText = active['Kode']; } else { notice.classList.add('hidden'); }
-            });
+            }).catch(err => console.log("Init..."));
         }
 
         function loadSettings() {
@@ -152,16 +175,19 @@
 
         function renderLayananEdit() {
             document.getElementById('layanan-list-edit').innerHTML = settings.layanan.map(l => `
-                <div class="flex gap-2"><input type="text" value="${l.nama}" class="lay-nama bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs flex-1"><input type="number" value="${l.harga}" class="lay-harga bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs w-24"><button onclick="this.parentElement.remove()" class="text-red-500 font-bold px-2">X</button></div>`).join('');
+                <div class="flex gap-2"><input type="text" value="${l.nama}" class="lay-nama bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs flex-1 text-white">
+                <input type="number" value="${l.harga}" class="lay-harga bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs w-24 text-white">
+                <button onclick="this.parentElement.remove()" class="text-red-500 font-bold px-2">X</button></div>`).join('');
         }
 
         function renderPesanEdit() {
-            document.getElementById('pesan-list-edit').innerHTML = Object.keys(settings.pesan).map(k => `
-                <div class="mb-4"><label class="text-[10px] font-bold text-amber-500 uppercase">${k}</label><textarea class="msg-val w-full bg-gray-900 border border-gray-700 rounded-xl p-3 h-20" data-key="${k}">${settings.pesan[k]}</textarea></div>`).join('');
+            document.getElementById('pesan-list-edit').innerHTML = Object.keys(settings.pesan).map(key => `
+                <div><label class="text-[10px] font-bold text-amber-500 uppercase">${key.replace('_',' ')}</label>
+                <textarea class="msg-val w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-xs h-20 text-white" data-key="${key}">${settings.pesan[key]}</textarea></div>`).join('');
         }
 
         function addLayananRow() {
-            const d = document.createElement('div'); d.className="flex gap-2"; d.innerHTML=`<input type="text" class="lay-nama bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs flex-1"><input type="number" class="lay-harga bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs w-24"><button onclick="this.parentElement.remove()" class="text-red-500 font-bold px-2">X</button>`;
+            const d = document.createElement('div'); d.className="flex gap-2"; d.innerHTML=`<input type="text" class="lay-nama bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs flex-1 text-white"><input type="number" class="lay-harga bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs w-24 text-white"><button onclick="this.parentElement.remove()" class="text-red-500 font-bold px-2">X</button>`;
             document.getElementById('layanan-list-edit').appendChild(d);
         }
 
@@ -175,9 +201,10 @@
             fetch(`${API_URL}?action=getJadwal&tanggal=${getTgl(0)}`).then(r => r.json()).then(data => {
                 const list = document.getElementById('tab-customer');
                 list.innerHTML = data.filter(d => d['Status Slot'] !== 'Available').map((d, i) => `
-                    <div class="bg-gray-800 p-5 rounded-3xl border border-gray-700 flex justify-between items-center mb-4">
-                        <div class="flex-1"><span class="text-[9px] uppercase font-black px-2 py-0.5 rounded-full bg-gray-900 ${d['Status Slot']==='Selesai'?'text-green-500':'text-amber-500'}">${d['Status Slot']}</span>
-                        <p class="text-xl font-black mt-1 uppercase">${d['Kode']} - ${d['Nama'] || '---'}</p><p class="text-[10px] text-gray-400 font-bold">${d['Jam']} | WA: ${d['Nomor']}</p></div>
+                    <div class="bg-gray-800 p-5 rounded-3xl border border-gray-700 flex justify-between items-center shadow-lg">
+                        <div class="flex-1 text-left"><span class="text-[9px] uppercase font-black px-2 py-0.5 rounded-full bg-gray-900 ${d['Status Slot']==='Selesai'?'text-green-500':'text-amber-500'}">${d['Status Slot']}</span>
+                        <p class="text-xl font-black mt-1 uppercase text-white">${d['Kode']} - ${d['Nama'] || '---'}</p>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase">${d['Jam']} | WA: ${d['Nomor']}</p></div>
                         <div class="flex gap-2">
                         ${['Antre','Booking'].includes(d['Status Slot']) ? `<button onclick="actionCapster('panggil', '${d['Nomor']}', '${d['Nama']}', ${i+2})" class="bg-amber-500 text-gray-900 w-12 h-12 rounded-2xl flex items-center justify-center"><i class="fa-solid fa-microphone"></i></button>` : ''}
                         ${d['Status Slot']==='Diproses' ? `<button onclick="openNotaModal('${d['Nomor']}', '${d['Nama']}', ${i+2})" class="bg-green-500 text-white w-12 h-12 rounded-2xl flex items-center justify-center"><i class="fa-solid fa-check text-xl"></i></button>` : ''}
@@ -188,7 +215,7 @@
         function openNotaModal(wa, nama, row) {
             currentSelesaiData = { wa, nama, row }; document.getElementById('modal-nota').style.display = 'flex';
             document.getElementById('nota-layanan-paten').innerHTML = settings.layanan.map(l => `
-                <button onclick="toggleLayananNota(this, '${l.nama}', ${l.harga})" class="border border-gray-700 p-3 rounded-xl text-[10px] font-bold uppercase hover:bg-amber-500/20">${l.nama}<br><span class="text-amber-500">Rp ${l.harga}</span></button>`).join('');
+                <button onclick="toggleLayananNota(this, '${l.nama}', ${l.harga})" class="border border-gray-700 p-3 rounded-xl text-[10px] font-bold uppercase hover:bg-amber-500/20 text-white">${l.nama}<br><span class="text-amber-500">Rp ${l.harga}</span></button>`).join('');
             updateNotaTotal();
         }
 
@@ -213,21 +240,32 @@
         }
 
         function actionCapster(act, wa, nama, row, total = "-", layanan = "-") {
-            fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: act, nomor: wa, nama: nama, row: row, pin: CORRECT_PIN, tanggal: getTgl(0), totalHarga: total, layananPaten: layanan }) }).then(() => loadDash());
+            fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: act, nomor: wa, nama: nama, row: row, pin: CORRECT_PIN, tanggal: getTgl(0), totalHarga: total, layananPaten: layanan }) }).then(() => { if(act==='panggil') alert('DIPANGGIL VIA WA!'); loadDash(); });
         }
 
-        function closeModalNota() { document.getElementById('modal-nota').style.display = 'none'; selectedLayananNota = []; }
-        function openModal(type) { document.getElementById('form-type').value=type; document.getElementById('modal').style.display='flex'; document.getElementById('form-tgl').innerHTML = type==='antre' ? `<option value="${getTgl(0)}">${getNamaHari(0)}</option>` : `<option value="${getTgl(0)}">${getNamaHari(0)}</option><option value="${getTgl(1)}">${getNamaHari(1)}</option>`; document.getElementById('booking-extra').classList.toggle('hidden', type==='antre'); }
+        function closeModalNota() { document.getElementById('modal-nota').style.display = 'none'; selectedLayananNota = []; document.getElementById('nota-ops-nama').value=""; document.getElementById('nota-ops-harga').value=""; }
+        function openModal(type) { document.getElementById('form-type').value=type; document.getElementById('modal').style.display='flex'; const sel=document.getElementById('form-tgl');
+            sel.innerHTML = (type==='antre') ? `<option value="${getTgl(0)}">${getNamaHari(0)}</option>` : `<option value="${getTgl(0)}">${getNamaHari(0)}</option><option value="${getTgl(1)}">${getNamaHari(1)}</option>`;
+            document.getElementById('booking-extra').classList.toggle('hidden', type==='antre'); }
         function closeModal() { document.getElementById('modal').style.display='none'; }
         
         document.getElementById('form-order').onsubmit = function(e) {
             e.preventDefault(); const btn=document.getElementById('btn-submit'); btn.innerText="PROSES..."; btn.disabled=true;
             let n = document.getElementById('form-nomor').value.replace(/[^0-9]/g, ''); if(n.startsWith('0')) n='62'+n.slice(1);
-            fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitBooking", type: document.getElementById('form-type').value, nama: document.getElementById('form-nama').value, nomor: n, jam: document.getElementById('form-jam').value, tanggal: document.getElementById('form-tgl').value, baseUrl: window.location.href.split('?')[0] }) }).then(r => r.json()).then(res => { alert(`KODE: ${res.kode}`); location.reload(); });
+            fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitBooking", type: document.getElementById('form-type').value, nama: document.getElementById('form-nama').value, nomor: n, jam: document.getElementById('form-jam').value, tanggal: document.getElementById('form-tgl').value, baseUrl: window.location.href.split('?')[0] }) })
+            .then(r => r.json()).then(res => { alert(`KODE: ${res.kode}`); location.reload(); }).catch(() => { alert('Gagal! Cek Deployment!'); btn.innerText="Daftar"; btn.disabled=false; });
         };
-        function pressPin(num) { if(currentPin.length<4) { currentPin+=num; document.getElementById(`dot${currentPin.length}`).classList.add('bg-amber-500'); } if(currentPin.length===4) { if(currentPin===CORRECT_PIN) showPage('page-dash'); else { alert("SALAH!"); clearPin(); } } }
-        function clearPin() { currentPin=""; for(let i=1; i<=4; i++) document.getElementById(`dot${i}`).classList.remove('bg-amber-500'); }
-        function cekStatus() { /* Logika sama seperti sebelumnya */ }
+        function pressPin(num) { if(currentPin.length < 4) { currentPin += num; document.getElementById(`dot${currentPin.length}`).classList.add('bg-amber-500'); } if(currentPin.length === 4) { if(currentPin === CORRECT_PIN) showPage('page-dash'); else { alert("SALAH!"); clearPin(); } } }
+        function clearPin() { currentPin = ""; for(let i=1; i<=4; i++) document.getElementById(`dot${i}`).classList.remove('bg-amber-500'); }
+        
+        function cekStatus() { 
+            const k = document.getElementById('cek-kode').value.toUpperCase(); if(!k) return;
+            fetch(`${API_URL}?action=getJadwal&tanggal=${getTgl(0)}`).then(r => r.json()).then(data => {
+                const me = data.find(d => d['Kode'] === k); const resD = document.getElementById('status-result'); const resT = document.getElementById('status-text');
+                if(!me) resT.innerText = "KODE TIDAK DITEMUKAN."; else { const idx = data.findIndex(d => d['Kode'] === k); const proc = data.findIndex(d => d['Status Slot'] === 'Diproses');
+                resT.innerText = `STATUS: ${me['Status Slot']}. SISA: ${proc===-1?idx:idx-proc} ORANG.`; } resD.classList.remove('hidden');
+            });
+        }
     </script>
 </body>
 </html>
