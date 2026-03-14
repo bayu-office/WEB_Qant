@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q-Ant Barbershop | Pitching Version</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .glass { background: rgba(31, 41, 55, 0.7); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="bg-gray-900 text-white font-sans min-h-screen">
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbxB1g5DLvkzvJfp6KbDZ7eYPI08VRBcD0SlOuxwu2lFf_qwoBWv9yj9VEex4BJAul5B/exec"; 
+    </script>
+
+    <header class="p-6 text-center bg-gray-800 shadow-2xl rounded-b-[3rem] border-b-4 border-amber-500">
+        <h1 class="text-3xl font-black tracking-[0.2em] text-amber-500 uppercase">Q-ANT BARBER</h1>
+        <p class="text-[10px] text-gray-400 tracking-widest mt-1">SMART QUEUE SYSTEM</p>
+        
+        <div class="flex justify-around mt-8 gap-4">
+            <div class="glass p-4 rounded-2xl flex-1 border border-gray-600">
+                <p class="text-[10px] uppercase text-gray-400 font-bold mb-1">Diproses</p>
+                <p id="curr-process" class="text-2xl font-black text-amber-400 tracking-tighter">--</p>
+            </div>
+            <div class="glass p-4 rounded-2xl flex-1 border border-gray-600">
+                <p class="text-[10px] uppercase text-gray-400 font-bold mb-1">Antrean</p>
+                <p id="total-queue" class="text-2xl font-black text-amber-400 tracking-tighter">--</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="p-6 space-y-6 max-w-md mx-auto">
+        <div class="grid grid-cols-2 gap-4">
+            <button onclick="openModal('antre')" class="bg-amber-500 hover:bg-amber-600 text-gray-900 font-black p-5 rounded-3xl shadow-lg transition-all active:scale-90">
+                <i class="fa-solid fa-bolt block mb-2 text-3xl"></i> ANTREAN<br>HARI INI
+            </button>
+            <button onclick="openModal('booking')" class="bg-gray-800 border-2 border-amber-500 text-amber-500 font-black p-5 rounded-3xl shadow-lg transition-all active:scale-90">
+                <i class="fa-solid fa-calendar-day block mb-2 text-3xl"></i> BOOKING<br>BESOK
+            </button>
+        </div>
+
+        <section class="bg-gray-800/50 p-6 rounded-3xl border border-gray-700 shadow-xl">
+            <h2 class="text-[10px] font-bold uppercase mb-4 text-gray-400 flex items-center">
+                <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse mr-2"></span> Cek Status Saya
+            </h2>
+            <div class="flex gap-2">
+                <input id="cek-kode" type="text" placeholder="KODE (A-XXXX)" class="bg-gray-900 border border-gray-600 rounded-2xl px-5 py-4 flex-1 focus:outline-none focus:border-amber-500 uppercase font-bold">
+                <button onclick="cekStatus()" class="bg-amber-500 text-gray-900 font-black px-6 rounded-2xl hover:bg-amber-400 transition-colors">CEK</button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="p-10 text-center opacity-30">
+        <p class="text-[10px] mb-2 uppercase">© 2026 Q-ANT Digital Solution</p>
+        <a href="?page=capster" class="text-[10px] bg-gray-800 px-4 py-2 rounded-full border border-gray-700">Akses Capster</a>
+    </footer>
+
+    <div id="modal" class="fixed inset-0 bg-black/95 hidden z-50 p-6 items-center justify-center">
+        <div class="bg-gray-800 w-full max-w-sm rounded-[2.5rem] p-8 border-2 border-amber-500 relative">
+            <button onclick="closeModal()" class="absolute -top-4 -right-2 bg-amber-500 text-gray-900 w-10 h-10 rounded-full font-black flex items-center justify-center shadow-lg"><i class="fa-solid fa-xmark text-xl"></i></button>
+            
+            <h3 id="modal-title" class="text-2xl font-black text-amber-500 uppercase mb-8 text-center">FORMULIR</h3>
+            
+            <form id="form-order" class="space-y-5">
+                <input type="hidden" id="form-type">
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-2 block">Nama Kamu</label>
+                    <input type="text" id="form-nama" required class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 focus:outline-none focus:border-amber-500 font-bold">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-2 block">WhatsApp</label>
+                    <input type="number" id="form-nomor" required placeholder="0812..." class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 focus:outline-none focus:border-amber-500 font-bold">
+                </div>
+                <div id="booking-extra" class="hidden">
+                    <label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-2 block">Pilih Jam</label>
+                    <select id="form-jam" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 focus:outline-none focus:border-amber-500 font-bold">
+                        <option value="13:00">13:00</option><option value="13:20">13:20</option>
+                        <option value="13:40">13:40</option><option value="14:00">14:00</option>
+                        <option value="14:20">14:20</option><option value="14:40">14:40</option>
+                        <option value="15:00">15:00</option><option value="15:20">15:20</option>
+                        <option value="15:40">15:40</option><option value="16:00">16:00</option>
+                        <option value="16:20">16:20</option><option value="16:40">16:40</option>
+                        <option value="17:00">17:00</option><option value="17:20">17:20</option>
+                        <option value="17:40">17:40</option><option value="19:00">19:00</option>
+                        <option value="19:20">19:20</option><option value="19:40">19:40</option>
+                        <option value="20:00">20:00</option><option value="20:20">20:20</option>
+                        <option value="20:40">20:40</option>
+                    </select>
+                </div>
+                <button type="submit" id="btn-submit" class="w-full bg-amber-500 text-gray-900 font-black py-5 rounded-2xl mt-4 shadow-xl hover:shadow-amber-500/20 active:scale-95 transition-all">KONFIRMASI SEKARANG</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        window.onload = () => fetchDataStatus();
+
+        function fetchDataStatus() {
+            const now = new Date();
+            const tgl = now.toLocaleDateString('id-ID', {day:'2-digit', month:'2-digit', year:'numeric'}).replace(/\//g, '-');
+            fetch(`${API_URL}?action=getJadwal&tanggal=${tgl}`)
+            .then(res => res.json())
+            .then(data => {
+                const total = data.filter(d => d['Status Slot'] === 'Antre' || d['Status Slot'] === 'Booking').length;
+                const active = data.find(d => d['Status Slot'] === 'Diproses');
+                document.getElementById('total-queue').innerText = total;
+                document.getElementById('curr-process').innerText = active ? active['Kode'] : '--';
+            }).catch(e => console.log("Init..."));
+        }
+
+        function openModal(type) {
+            document.getElementById('form-type').value = type;
+            document.getElementById('modal').style.display = 'flex';
+            document.getElementById('modal-title').innerText = type === 'antre' ? 'Antrean Hari Ini' : 'Booking Besok';
+            document.getElementById('booking-extra').style.display = type === 'booking' ? 'block' : 'none';
+        }
+
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+        document.getElementById('form-order').onsubmit = function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit');
+            const type = document.getElementById('form-type').value;
+            
+            btn.innerText = "MENYAMBUNG KE SERVER...";
+            btn.disabled = true;
+
+            const now = new Date();
+            if(type === 'booking') now.setDate(now.getDate() + 1);
+            const tglFix = now.toLocaleDateString('id-ID', {day:'2-digit', month:'2-digit', year:'numeric'}).replace(/\//g, '-');
+
+            const payload = {
+                action: "submitBooking",
+                type: type,
+                nama: document.getElementById('form-nama').value,
+                nomor: document.getElementById('form-nomor').value,
+                jam: document.getElementById('form-jam').value,
+                tanggal: tglFix
+            };
+
+            fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
+            .then(res => res.json())
+            .then(res => {
+                alert(`PENDAFTARAN BERHASIL!\nKode Kamu: ${res.kode}\nSimpan kode ini untuk ditunjukkan ke capster.`);
+                location.reload();
+            });
+        };
+
+        function cekStatus() {
+            alert("Sedang mengecek antrean kamu secara real-time...");
+        }
+    </script>
+</body>
+</html>
