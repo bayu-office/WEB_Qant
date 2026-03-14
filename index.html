@@ -3,39 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Q-Ant Barbershop | System</title>
+    <title>Q-Ant Barber | System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        .page { display: none; transition: all 0.3s ease; }
+        .page.active { display: block; }
         .glass { background: rgba(31, 41, 55, 0.7); backdrop-filter: blur(10px); }
-        .tab-content { display: none; }
-        .active { display: block; }
+        .numpad-btn { height: 70px; background: #1f2937; border-radius: 1rem; font-weight: 800; font-size: 1.5rem; transition: 0.2s; }
+        .numpad-btn:active { background: #f59e0b; color: #111827; transform: scale(0.95); }
     </style>
 </head>
 <body class="bg-gray-900 text-white font-sans min-h-screen">
 
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbxB1g5DLvkzvJfp6KbDZ7eYPI08VRBcD0SlOuxwu2lFf_qwoBWv9yj9VEex4BJAul5B/exec";
-        const PIN_CAPSTER = "1234"; // Sesuai yang ada di GAS
+        const CORRECT_PIN = "1234"; 
+        let currentPin = "";
     </script>
 
-    <div id="page-user" class="tab-content active">
+    <div id="page-user" class="page active">
         <header class="p-6 text-center bg-gray-800 shadow-2xl rounded-b-[3rem] border-b-4 border-amber-500">
-            <h1 class="text-3xl font-black tracking-[0.2em] text-amber-500 uppercase">Q-ANT BARBER</h1>
+            <h1 class="text-3xl font-black tracking-widest text-amber-500 uppercase italic">Q-ANT BARBER</h1>
             <div class="flex justify-around mt-8 gap-4">
                 <div class="glass p-4 rounded-2xl flex-1 border border-gray-600">
                     <p class="text-[10px] uppercase text-gray-400 font-bold mb-1">Sedang Diproses</p>
-                    <p id="curr-process" class="text-2xl font-black text-amber-400">--</p>
+                    <p id="user-curr" class="text-2xl font-black text-amber-400">--</p>
                 </div>
                 <div class="glass p-4 rounded-2xl flex-1 border border-gray-600">
-                    <p class="text-[10px] uppercase text-gray-400 font-bold mb-1">Sisa Antrean</p>
-                    <p id="total-queue" class="text-2xl font-black text-amber-400">--</p>
+                    <p class="text-[10px] uppercase text-gray-400 font-bold mb-1">Antrean</p>
+                    <p id="user-total" class="text-2xl font-black text-amber-400">--</p>
                 </div>
             </div>
         </header>
-
         <main class="p-6 space-y-6 max-w-md mx-auto">
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-4 mt-4">
                 <button onclick="openModal('antre')" class="bg-amber-500 text-gray-900 font-black p-5 rounded-3xl shadow-lg active:scale-95 transition-all">
                     <i class="fa-solid fa-bolt block mb-2 text-3xl"></i> AMBIL ANTREAN
                 </button>
@@ -43,50 +45,63 @@
                     <i class="fa-solid fa-calendar-day block mb-2 text-3xl"></i> BOOKING
                 </button>
             </div>
-            <section class="bg-gray-800/50 p-6 rounded-3xl border border-gray-700">
-                <h2 class="text-[10px] font-bold uppercase mb-4 text-gray-400">Cek Status Saya</h2>
-                <div class="flex gap-2">
-                    <input id="cek-kode" type="text" placeholder="KODE (A-XXXX)" class="bg-gray-900 border border-gray-600 rounded-2xl px-5 py-4 flex-1 uppercase font-bold focus:outline-none focus:border-amber-500">
-                    <button onclick="alert('Fitur Tracking Segera Hadir')" class="bg-amber-500 text-gray-900 font-black px-6 rounded-2xl">CEK</button>
-                </div>
-            </section>
         </main>
+        <footer class="mt-20 p-10 text-center opacity-20">
+            <button onclick="showPage('page-login')" class="text-xs uppercase tracking-widest">Akses Capster</button>
+        </footer>
     </div>
 
-    <div id="page-capster" class="tab-content p-6 max-w-lg mx-auto">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-black text-amber-500 uppercase italic">Capster Dash</h2>
-            <button onclick="location.href='/'" class="text-xs bg-gray-700 px-3 py-1 rounded-lg">Logout</button>
-        </div>
-        
-        <div id="capster-list" class="space-y-4">
-            <p class="text-center text-gray-500 py-10">Memuat data antrean...</p>
+    <div id="page-login" class="page p-6">
+        <div class="max-w-xs mx-auto text-center pt-10">
+            <h2 class="text-amber-500 font-black text-2xl mb-8 tracking-widest uppercase italic">INPUT PIN</h2>
+            <div class="flex justify-center gap-4 mb-10">
+                <div id="dot1" class="w-4 h-4 rounded-full border-2 border-amber-500"></div>
+                <div id="dot2" class="w-4 h-4 rounded-full border-2 border-amber-500"></div>
+                <div id="dot3" class="w-4 h-4 rounded-full border-2 border-amber-500"></div>
+                <div id="dot4" class="w-4 h-4 rounded-full border-2 border-amber-500"></div>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <script>
+                    for(let i=1; i<=9; i++) document.write(`<button onclick="pressPin('${i}')" class="numpad-btn">${i}</button>`);
+                </script>
+                <button onclick="clearPin()" class="text-red-500 font-bold">CLR</button>
+                <button onclick="pressPin('0')" class="numpad-btn">0</button>
+                <button onclick="showPage('page-user')" class="text-gray-500 font-bold text-sm uppercase">Batal</button>
+            </div>
         </div>
     </div>
 
-    <div id="modal" class="fixed inset-0 bg-black/95 hidden z-50 p-6 items-center justify-center">
+    <div id="page-dash" class="page p-6">
+        <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
+            <h2 class="text-amber-500 font-black text-xl italic uppercase">Capster Dash</h2>
+            <button onclick="showPage('page-user')" class="bg-red-500 text-[10px] font-bold px-3 py-1 rounded-lg">KELUAR</button>
+        </div>
+        <div id="dash-list" class="space-y-4">
+            <p class="text-center text-gray-600 py-10">Memuat data...</p>
+        </div>
+    </div>
+
+    <div id="modal" class="fixed inset-0 bg-black/90 hidden z-50 p-6 items-center justify-center">
         <div class="bg-gray-800 w-full max-w-sm rounded-[2.5rem] p-8 border-2 border-amber-500 relative">
-            <button onclick="closeModal()" class="absolute -top-4 -right-2 bg-amber-500 text-gray-900 w-10 h-10 rounded-full font-black flex items-center justify-center shadow-lg"><i class="fa-solid fa-xmark text-xl"></i></button>
-            <h3 id="modal-title" class="text-xl font-black text-amber-500 uppercase mb-8 text-center">FORMULIR</h3>
-            
+            <button onclick="closeModal()" class="absolute -top-4 -right-2 bg-amber-500 text-gray-900 w-10 h-10 rounded-full font-black flex items-center justify-center">X</button>
+            <h3 id="modal-title" class="text-xl font-black text-amber-500 uppercase mb-8 text-center tracking-widest italic">FORMULIR</h3>
             <form id="form-order" class="space-y-5">
                 <input type="hidden" id="form-type">
                 <div>
                     <label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block">Pilih Hari</label>
-                    <select id="form-tgl" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 focus:outline-none font-bold">
-                        </select>
+                    <select id="form-tgl" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold text-white uppercase focus:outline-none"></select>
                 </div>
                 <div>
                     <label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block">Nama</label>
-                    <input type="text" id="form-nama" required class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 focus:outline-none font-bold">
+                    <input type="text" id="form-nama" required class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold focus:outline-none focus:border-amber-500">
                 </div>
                 <div>
                     <label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block">WhatsApp</label>
-                    <input type="number" id="form-nomor" required class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 focus:outline-none font-bold">
+                    <input type="number" id="form-nomor" required placeholder="08..." class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold focus:outline-none focus:border-amber-500">
                 </div>
                 <div id="booking-extra" class="hidden">
                     <label class="text-[10px] font-bold text-gray-400 uppercase ml-2 mb-1 block">Pilih Jam</label>
-                    <select id="form-jam" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 focus:outline-none font-bold">
+                    <select id="form-jam" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold text-white uppercase focus:outline-none">
                         <option value="13:00">13:00</option><option value="13:20">13:20</option><option value="13:40">13:40</option>
                         <option value="14:00">14:00</option><option value="14:20">14:20</option><option value="14:40">14:40</option>
                         <option value="15:00">15:00</option><option value="15:20">15:20</option><option value="15:40">15:40</option>
@@ -112,24 +127,23 @@
             return d.toLocaleDateString('id-ID', {weekday: 'long', day:'numeric', month:'short'});
         };
 
-        window.onload = () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            if(urlParams.get('page') === 'capster') {
-                document.getElementById('page-user').classList.remove('active');
-                document.getElementById('page-capster').classList.add('active');
-                loadCapsterData();
-            } else {
-                fetchDataStatus();
-            }
-        };
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            if(pageId === 'page-user') fetchData();
+            if(pageId === 'page-dash') loadDash();
+            if(pageId === 'page-login') clearPin();
+        }
 
-        function fetchDataStatus() {
+        window.onload = () => fetchData();
+
+        function fetchData() {
             fetch(`${API_URL}?action=getJadwal&tanggal=${getTgl(0)}`)
             .then(r => r.json()).then(data => {
                 const total = data.filter(d => ['Antre','Booking'].includes(d['Status Slot'])).length;
                 const active = data.find(d => d['Status Slot'] === 'Diproses');
-                document.getElementById('total-queue').innerText = total;
-                document.getElementById('curr-process').innerText = active ? active['Kode'] : '--';
+                document.getElementById('user-total').innerText = total;
+                document.getElementById('user-curr').innerText = active ? active['Kode'] : '--';
             });
         }
 
@@ -138,9 +152,9 @@
             document.getElementById('modal').style.display = 'flex';
             const selTgl = document.getElementById('form-tgl');
             selTgl.innerHTML = type === 'antre' ? 
-                `<option value="${getTgl(0)}">Hari Ini (${getNamaHari(0)})</option>` :
-                `<option value="${getTgl(1)}">Besok (${getNamaHari(1)})</option>`;
-            document.getElementById('booking-extra').style.display = type === 'booking' ? 'block' : 'none';
+                `<option value="${getTgl(0)}">${getNamaHari(0)} (Hari Ini)</option>` :
+                `<option value="${getTgl(1)}">${getNamaHari(1)} (Besok)</option>`;
+            document.getElementById('booking-extra').classList.toggle('hidden', type === 'antre');
         }
 
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
@@ -149,7 +163,6 @@
             e.preventDefault();
             const btn = document.getElementById('btn-submit');
             btn.innerText = "MEMPROSES..."; btn.disabled = true;
-            
             const payload = {
                 action: "submitBooking",
                 type: document.getElementById('form-type').value,
@@ -158,48 +171,57 @@
                 jam: document.getElementById('form-jam').value,
                 tanggal: document.getElementById('form-tgl').value
             };
-
             fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
             .then(r => r.json()).then(res => {
-                alert(`BERHASIL!\nKode: ${res.kode}`);
+                alert(`PENDAFTARAN BERHASIL!\nKode: ${res.kode}`);
                 location.reload();
             });
         };
 
-        // ================== LOGIC CAPSTER ==================
-        function loadCapsterData() {
+        // NUMPAD PIN LOGIC
+        function pressPin(num) {
+            if(currentPin.length < 4) {
+                currentPin += num;
+                document.getElementById(`dot${currentPin.length}`).classList.add('bg-amber-500');
+            }
+            if(currentPin.length === 4) {
+                if(currentPin === CORRECT_PIN) showPage('page-dash');
+                else { alert("PIN SALAH!"); clearPin(); }
+            }
+        }
+        function clearPin() {
+            currentPin = "";
+            for(let i=1; i<=4; i++) document.getElementById(`dot${i}`).classList.remove('bg-amber-500');
+        }
+
+        // DASHBOARD LOGIC
+        function loadDash() {
             fetch(`${API_URL}?action=getJadwal&tanggal=${getTgl(0)}`)
             .then(r => r.json()).then(data => {
-                const list = document.getElementById('capster-list');
-                const filterData = data.filter(d => d['Status Slot'] !== 'Available');
-                list.innerHTML = filterData.map((d, i) => `
+                const list = document.getElementById('dash-list');
+                const filter = data.filter(d => d['Status Slot'] !== 'Available');
+                list.innerHTML = filter.map((d, i) => `
                     <div class="bg-gray-800 p-5 rounded-3xl border border-gray-700 flex justify-between items-center">
-                        <div>
-                            <p class="text-[10px] uppercase text-amber-500 font-bold">${d['Status Slot']}</p>
-                            <p class="text-xl font-black">${d['Kode']} - ${d['Nama Customer']}</p>
-                            <p class="text-xs text-gray-400">${d['Jam']} | ${d['No WA']}</p>
+                        <div class="flex-1">
+                            <span class="text-[9px] uppercase font-black px-2 py-0.5 rounded-full bg-gray-900 ${d['Status Slot'] === 'Selesai' ? 'text-green-500' : 'text-amber-500'}">${d['Status Slot']}</span>
+                            <p class="text-xl font-black mt-1">${d['Kode']} - ${d['Nama'] || '---'}</p>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase">${d['Jam']} | WA: ${d['Nomor'] || '-'}</p>
                         </div>
-                        ${d['Status Slot'] !== 'Selesai' && d['Status Slot'] !== 'Diproses' ? 
-                            `<button onclick="prosesCapster('panggil', '${d['No WA']}', '${d['Nama Customer']}', ${i+2})" class="bg-amber-500 text-gray-900 px-4 py-2 rounded-xl font-bold text-xs">PANGGIL</button>` : 
-                            (d['Status Slot'] === 'Diproses' ? `<button onclick="prosesCapster('selesai', '${d['No WA']}', '${d['Nama Customer']}', ${i+2})" class="bg-green-500 text-white px-4 py-2 rounded-xl font-bold text-xs">FINISH</button>` : '<i class="fa-solid fa-check-double text-green-500"></i>')
-                        }
+                        <div class="flex gap-2">
+                            ${(d['Status Slot'] === 'Antre' || d['Status Slot'] === 'Booking') ? `<button onclick="actionCapster('panggil', '${d['Nomor']}', '${d['Nama']}', ${i+2})" class="bg-amber-500 text-gray-900 w-10 h-10 rounded-xl flex items-center justify-center"><i class="fa-solid fa-microphone"></i></button>` : ''}
+                            ${d['Status Slot'] === 'Diproses' ? `<button onclick="actionCapster('selesai', '${d['Nomor']}', '${d['Nama']}', ${i+2})" class="bg-green-500 text-white w-10 h-10 rounded-xl flex items-center justify-center"><i class="fa-solid fa-check text-xl"></i></button>` : ''}
+                            ${d['Status Slot'] === 'Selesai' ? `<i class="fa-solid fa-circle-check text-green-500 text-2xl mr-2"></i>` : ''}
+                        </div>
                     </div>
-                `).join('') || '<p class="text-center text-gray-500">Tidak ada antrean hari ini</p>';
+                `).join('') || '<p class="text-center text-gray-500">Antrean Kosong</p>';
             });
         }
 
-        function prosesCapster(act, wa, nama, row) {
-            const pin = prompt("Masukkan PIN Capster:");
-            if(pin !== PIN_CAPSTER) return alert("PIN SALAH!");
-
-            let payload = { action: act, nomor: wa, nama: nama, row: row, pin: pin, tanggal: getTgl(0) };
-            if(act === 'selesai') {
-                payload.totalHarga = prompt("Input Total Harga (Angka Saja):", "35000");
-                payload.layananPaten = "Cukur"; payload.layananOpsional = "-";
-            }
-
-            fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
-            .then(() => { alert("Berhasil!"); loadCapsterData(); });
+        function actionCapster(act, wa, nama, row) {
+            let total = "-";
+            if(act === 'selesai') { total = prompt("Total Bayar (Rp):", "35000"); if(!total) return; }
+            const payload = { action: act, nomor: wa, nama: nama, row: row, pin: CORRECT_PIN, tanggal: getTgl(0), totalHarga: total, layananPaten: "Cukur", layananOpsional: "-" };
+            fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(() => loadDash());
         }
     </script>
 </body>
