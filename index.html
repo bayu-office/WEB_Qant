@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .page { display: none; }
-        .page.active { display: block; }
+        .page.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .glass { background: rgba(31, 41, 55, 0.7); backdrop-filter: blur(10px); }
         .dash-tab { display: none; }
         .dash-tab.active { display: block; }
@@ -21,7 +22,7 @@
 <body class="bg-gray-900 text-white font-sans min-h-screen">
 
     <script>
-        // URL API TERBARU PADUKA SUDAH TERPASANG
+        // API URL TERBARU PADUKA
         const API_URL = "https://script.google.com/macros/s/AKfycbxB1g5DLvkzvJfp6KbDZ7eYPI08VRBcD0SlOuxwu2lFf_qwoBWv9yj9VEex4BJAul5B/exec";
         const CORRECT_PIN = "1234";
         let currentPin = "";
@@ -49,8 +50,8 @@
         </header>
         <main class="p-6 space-y-6 max-w-md mx-auto">
             <div class="grid grid-cols-2 gap-4">
-                <button onclick="openModal('antre')" class="bg-amber-500 text-gray-900 font-black p-5 rounded-3xl shadow-lg active:scale-95 transition-all uppercase italic">Ambil Antrean</button>
-                <button onclick="openModal('booking')" class="bg-gray-800 border-2 border-amber-500 text-amber-500 font-black p-5 rounded-3xl shadow-lg active:scale-95 transition-all uppercase italic">Booking</button>
+                <button onclick="navTo('modal', 'antre')" class="bg-amber-500 text-gray-900 font-black p-5 rounded-3xl shadow-lg active:scale-95 transition-all uppercase italic">Ambil Antrean</button>
+                <button onclick="navTo('modal', 'booking')" class="bg-gray-800 border-2 border-amber-500 text-amber-500 font-black p-5 rounded-3xl shadow-lg active:scale-95 transition-all uppercase italic">Booking</button>
             </div>
             <section class="bg-gray-800/50 p-6 rounded-3xl border border-gray-700 shadow-xl">
                 <div class="flex gap-2">
@@ -60,62 +61,65 @@
                 <div id="status-result" class="hidden mt-4 p-4 bg-gray-900 rounded-2xl border border-amber-500 text-center"><p id="status-text" class="text-sm font-bold text-amber-400"></p></div>
             </section>
         </main>
-        <footer class="mt-20 p-10 text-center opacity-10"><button onclick="showPage('page-login')">ADMIN</button></footer>
+        <footer class="mt-20 p-10 text-center opacity-10"><button onclick="navTo('page-login')">ADMIN</button></footer>
     </div>
 
     <div id="page-dash" class="page p-6">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-amber-500 font-black text-xl italic uppercase italic underline tracking-tighter">Dashboard Capster</h2>
-            <button onclick="showPage('page-user')" class="bg-red-500 text-[10px] px-3 py-1 rounded-lg font-bold">LOGOUT</button>
+            <h2 class="text-amber-500 font-black text-xl italic uppercase underline tracking-tighter">Capster Dash</h2>
+            <button onclick="navTo('page-user')" class="bg-red-500 text-[10px] px-3 py-1 rounded-lg font-bold uppercase">Logout</button>
         </div>
         <div class="flex gap-2 mb-6 overflow-x-auto pb-2 border-b border-gray-800">
             <button onclick="showTab('tab-customer')" class="tab-btn active bg-gray-800 px-6 py-2 rounded-xl text-[10px] font-bold border-b-2 border-amber-500 uppercase">Customer</button>
             <button onclick="showTab('tab-layanan')" class="tab-btn bg-gray-800 px-6 py-2 rounded-xl text-[10px] font-bold border-b-2 border-transparent uppercase">Layanan</button>
             <button onclick="showTab('tab-pesan')" class="tab-btn bg-gray-800 px-6 py-2 rounded-xl text-[10px] font-bold border-b-2 border-transparent uppercase">Pesan WA</button>
         </div>
+        
         <div id="tab-customer" class="dash-tab active space-y-4"></div>
+        
         <div id="tab-layanan" class="dash-tab space-y-4">
             <div id="layanan-list-edit" class="space-y-2"></div>
-            <button onclick="addLayananRow()" class="w-full bg-gray-800 border border-dashed border-gray-600 py-3 rounded-xl text-[10px] uppercase">+ Tambah Layanan</button>
-            <button onclick="saveSettings('layanan')" class="w-full bg-amber-500 text-gray-900 font-black py-4 rounded-2xl text-xs uppercase">Simpan Daftar Harga</button>
+            <button onclick="addLayananRow()" class="w-full bg-gray-800 border border-dashed border-gray-600 py-3 rounded-xl text-[10px] uppercase font-bold text-gray-400 hover:text-white">+ Tambah Layanan</button>
+            <button onclick="saveSettings('layanan')" class="w-full bg-amber-500 text-gray-900 font-black py-4 rounded-2xl text-xs uppercase shadow-lg active:scale-95 transition-transform">Simpan Daftar Harga</button>
         </div>
+        
         <div id="tab-pesan" class="dash-tab space-y-4">
             <div id="pesan-list-edit" class="space-y-4"></div>
-            <button onclick="saveSettings('pesan')" class="w-full bg-amber-500 text-gray-900 font-black py-4 rounded-2xl text-xs uppercase">Simpan Template Pesan</button>
+            <button onclick="saveSettings('pesan')" class="w-full bg-amber-500 text-gray-900 font-black py-4 rounded-2xl text-xs uppercase shadow-lg active:scale-95 transition-transform">Simpan Template Pesan</button>
         </div>
     </div>
 
-    <div id="modal-nota" class="fixed inset-0 bg-black/95 hidden z-[100] p-6 items-center justify-center">
-        <div class="bg-gray-800 w-full max-w-sm rounded-[2.5rem] p-8 border-2 border-green-500 shadow-lg">
+    <div id="modal-nota" class="fixed inset-0 bg-black/95 hidden z-[100] p-6 items-center justify-center font-sans">
+        <div class="bg-gray-800 w-full max-w-sm rounded-[2.5rem] p-8 border-2 border-green-500 shadow-[0_0_30px_rgba(34,197,94,0.3)]">
             <h3 class="text-green-500 font-black text-center mb-6 uppercase italic tracking-widest">Selesaikan Sesi</h3>
             <div class="space-y-4 text-left">
                 <div id="nota-layanan-paten" class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto pr-2"></div>
                 <div class="border-t border-gray-700 pt-4">
                     <label class="text-[10px] font-bold text-gray-400 block mb-1 uppercase">Layanan Tambahan (Manual)</label>
-                    <input type="text" id="nota-ops-nama" placeholder="Nama Layanan" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-xs mb-2 text-white">
-                    <input type="number" id="nota-ops-harga" placeholder="Harga (Rp)" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-xs text-white">
+                    <input type="text" id="nota-ops-nama" placeholder="Nama Layanan" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-xs mb-2 text-white focus:border-green-500 focus:outline-none">
+                    <input type="number" id="nota-ops-harga" placeholder="Harga (Rp)" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-xs text-white focus:border-green-500 focus:outline-none">
                 </div>
                 <div class="bg-gray-900 p-5 rounded-2xl text-center border border-gray-700">
                     <p class="text-[10px] text-gray-400 uppercase font-bold">Total Pembayaran</p>
                     <p id="nota-total-display" class="text-3xl font-black text-amber-500 font-sans">Rp 0</p>
                 </div>
-                <button onclick="confirmSelesai()" class="w-full bg-green-500 text-gray-900 font-black py-5 rounded-2xl shadow-xl uppercase active:scale-95 transition-all">Konfirmasi & Kirim Nota WA</button>
-                <button onclick="closeModalNota()" class="w-full text-gray-500 text-[10px] font-bold py-2 uppercase tracking-widest">Batal</button>
+                <button onclick="confirmSelesai()" id="btn-konfirm-nota" class="w-full bg-green-500 text-gray-900 font-black py-5 rounded-2xl shadow-xl uppercase active:scale-95 transition-all">Konfirmasi & Kirim WA</button>
+                <button onclick="closeModalNota()" class="w-full text-gray-500 text-[10px] font-bold py-2 uppercase tracking-widest hover:text-white">Batal</button>
             </div>
         </div>
     </div>
 
-    <div id="modal" class="fixed inset-0 bg-black/90 hidden z-50 p-6 items-center justify-center">
-        <div class="bg-gray-800 w-full max-w-sm rounded-[2.5rem] p-8 border-2 border-amber-500 relative">
-            <button onclick="closeModal()" class="absolute -top-4 -right-2 bg-amber-500 text-gray-900 w-10 h-10 rounded-full font-black">X</button>
+    <div id="modal" class="page fixed inset-0 bg-black/90 z-50 p-6 items-center justify-center hidden">
+        <div class="bg-gray-800 w-full max-w-sm rounded-[2.5rem] p-8 border-2 border-amber-500 relative mt-20 mx-auto">
+            <button onclick="window.history.back()" class="absolute -top-4 -right-2 bg-amber-500 text-gray-900 w-10 h-10 rounded-full font-black shadow-lg">X</button>
             <h3 class="text-xl font-black text-amber-500 uppercase mb-8 text-center italic tracking-widest">Formulir</h3>
             <form id="form-order" class="space-y-4">
                 <input type="hidden" id="form-type">
-                <select id="form-tgl" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold text-white"></select>
-                <input type="text" id="form-nama" required placeholder="NAMA" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold uppercase text-white">
-                <input type="text" id="form-nomor" required placeholder="WHATSAPP (08...)" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold text-white">
+                <select id="form-tgl" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold text-white uppercase focus:outline-none focus:border-amber-500"></select>
+                <input type="text" id="form-nama" required placeholder="NAMA" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold uppercase text-white focus:outline-none focus:border-amber-500">
+                <input type="text" id="form-nomor" required placeholder="WHATSAPP (08...)" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold text-white focus:outline-none focus:border-amber-500">
                 <div id="booking-extra" class="hidden">
-                    <select id="form-jam" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold text-white">
+                    <select id="form-jam" class="w-full bg-gray-900 border border-gray-700 rounded-2xl px-5 py-4 font-bold text-white focus:outline-none focus:border-amber-500">
                         <option value="13:00">13:00</option><option value="13:20">13:20</option><option value="13:40">13:40</option>
                         <option value="14:00">14:00</option><option value="14:20">14:20</option><option value="14:40">14:40</option>
                         <option value="15:00">15:00</option><option value="15:20">15:20</option><option value="15:40">15:40</option>
@@ -127,13 +131,25 @@
                         <option value="21:00">21:00</option>
                     </select>
                 </div>
-                <button type="submit" id="btn-submit" class="w-full bg-amber-500 text-gray-900 font-black py-5 rounded-2xl uppercase italic">Daftar Sekarang</button>
+                <button type="submit" id="btn-submit" class="w-full bg-amber-500 text-gray-900 font-black py-5 rounded-2xl uppercase italic active:scale-95 transition-transform shadow-xl">Daftar Sekarang</button>
             </form>
         </div>
     </div>
 
     <div id="page-login" class="page p-6 pt-20">
-        <div class="max-w-xs mx-auto text-center"><div class="flex justify-center gap-4 mb-10"><div id="dot1" class="w-4 h-4 rounded-full border-2 border-amber-500"></div><div id="dot2" class="w-4 h-4 rounded-full border-2 border-amber-500"></div><div id="dot3" class="w-4 h-4 rounded-full border-2 border-amber-500"></div><div id="dot4" class="w-4 h-4 rounded-full border-2 border-amber-500"></div></div><div class="grid grid-cols-3 gap-4"><script>for(let i=1; i<=9; i++) document.write(`<button onclick="pressPin('${i}')" class="numpad-btn">${i}</button>`);</script><button onclick="clearPin()" class="text-red-500 font-bold text-sm">CLR</button><button onclick="pressPin('0')" class="numpad-btn">0</button><button onclick="showPage('page-user')" class="text-gray-500 font-bold text-sm uppercase">ESC</button></div></div>
+        <div class="max-w-xs mx-auto text-center">
+            <h2 class="text-amber-500 font-black text-2xl mb-8 uppercase italic">KODE AKSES</h2>
+            <div class="flex justify-center gap-4 mb-10">
+                <div id="dot1" class="w-4 h-4 rounded-full border-2 border-amber-500"></div><div id="dot2" class="w-4 h-4 rounded-full border-2 border-amber-500"></div>
+                <div id="dot3" class="w-4 h-4 rounded-full border-2 border-amber-500"></div><div id="dot4" class="w-4 h-4 rounded-full border-2 border-amber-500"></div>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <script>for(let i=1; i<=9; i++) document.write(`<button onclick="pressPin('${i}')" class="numpad-btn">${i}</button>`);</script>
+                <button onclick="clearPin()" class="text-red-500 font-bold text-sm uppercase">Clr</button>
+                <button onclick="pressPin('0')" class="numpad-btn">0</button>
+                <button onclick="window.history.back()" class="text-gray-500 font-bold text-sm uppercase">Esc</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -141,11 +157,52 @@
         const getTgl = (off) => { const d = new Date(); d.setDate(d.getDate() + off); return d.toLocaleDateString('id-ID', {day:'2-digit', month:'2-digit', year:'numeric'}).replace(/\//g, '-'); };
         const getNamaHari = (off) => { const d = new Date(); d.setDate(d.getDate() + off); return d.toLocaleDateString('id-ID', {weekday: 'long', day:'numeric', month:'short'}); };
 
-        window.onload = () => { fetchData(); loadSettings(); setInterval(fetchData, 5000); };
+        // INITIALIZE
+        window.onload = () => { 
+            fetchData(); 
+            loadSettings(); 
+            // Cek status via URL (?cek=A-XXXX)
+            const urlParams = new URLSearchParams(window.location.search);
+            if(urlParams.get('cek')) { document.getElementById('cek-kode').value = urlParams.get('cek'); cekStatus(); }
+            
+            // Simpan history pertama
+            history.replaceState({page: 'page-user'}, "", "?home");
+        };
 
-        function showPage(pageId) { 
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); 
-            document.getElementById(pageId).classList.add('active'); 
+        // AUTO REFRESH 1 MENIT (Hanya saat di halaman User)
+        setInterval(() => {
+            if(document.getElementById('page-user').classList.contains('active')) {
+                fetchData();
+            }
+        }, 60000);
+
+        // SMART BACK BUTTON (History API)
+        function navTo(pageId, type = null) {
+            history.pushState({page: pageId, type: type}, "", "?" + pageId);
+            renderPage(pageId, type);
+        }
+
+        window.addEventListener('popstate', (e) => {
+            if (e.state && e.state.page) renderPage(e.state.page, e.state.type);
+            else renderPage('page-user');
+        });
+
+        function renderPage(pageId, type = null) { 
+            document.querySelectorAll('.page').forEach(p => {
+                p.classList.remove('active');
+                if(p.id === 'modal') p.style.display = 'none'; // Khusus modal flex
+            }); 
+            
+            const target = document.getElementById(pageId);
+            if(pageId === 'modal') {
+                target.style.display = 'flex';
+                target.classList.add('active');
+                document.getElementById('form-type').value = type;
+                document.getElementById('form-tgl').innerHTML = type === 'antre' ? `<option value="${getTgl(0)}">${getNamaHari(0)}</option>` : `<option value="${getTgl(0)}">${getNamaHari(0)}</option><option value="${getTgl(1)}">${getNamaHari(1)}</option>`;
+                document.getElementById('booking-extra').classList.toggle('hidden', type === 'antre');
+            } else {
+                target.classList.add('active'); 
+            }
             if(pageId === 'page-dash') loadDash(); 
         }
 
@@ -156,17 +213,23 @@
             event.currentTarget.classList.add('active', 'border-amber-500');
         }
 
+        // FETCH JADWAL (Database Transaksi)
         function fetchData() {
             fetch(`${API_URL}?action=getJadwal&tanggal=${getTgl(0)}`).then(r => r.json()).then(data => {
-                const active = data.find(d => d['Status Slot'] === 'Diproses');
                 const total = data.filter(d => ['Antre','Booking'].includes(d['Status Slot'])).length;
+                const active = data.find(d => d['Status Slot'] === 'Diproses');
+                
                 document.getElementById('user-total').innerText = total;
                 document.getElementById('user-curr').innerText = active ? active['Kode'] : '--';
+                
+                // Trigger Web Notice
                 const notice = document.getElementById('web-notice');
-                if(active) { notice.classList.remove('hidden'); document.getElementById('notice-kode').innerText = active['Kode']; } else { notice.classList.add('hidden'); }
-            }).catch(err => console.log("Init..."));
+                if(active) { notice.classList.remove('hidden'); document.getElementById('notice-kode').innerText = active['Kode']; } 
+                else { notice.classList.add('hidden'); }
+            }).catch(err => console.log("Refresh pending..."));
         }
 
+        // FETCH SETTINGS (Database Pengaturan)
         function loadSettings() {
             fetch(`${API_URL}?action=getSettings`).then(r => r.json()).then(data => {
                 settings = data; renderLayananEdit(); renderPesanEdit();
@@ -175,47 +238,49 @@
 
         function renderLayananEdit() {
             document.getElementById('layanan-list-edit').innerHTML = settings.layanan.map(l => `
-                <div class="flex gap-2"><input type="text" value="${l.nama}" class="lay-nama bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs flex-1 text-white">
-                <input type="number" value="${l.harga}" class="lay-harga bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs w-24 text-white">
-                <button onclick="this.parentElement.remove()" class="text-red-500 font-bold px-2">X</button></div>`).join('');
+                <div class="flex gap-2"><input type="text" value="${l.nama}" class="lay-nama bg-gray-900 border border-gray-700 rounded-lg p-3 text-xs flex-1 text-white focus:border-amber-500 focus:outline-none">
+                <input type="number" value="${l.harga}" class="lay-harga bg-gray-900 border border-gray-700 rounded-lg p-3 text-xs w-28 text-white focus:border-amber-500 focus:outline-none">
+                <button onclick="this.parentElement.remove()" class="text-red-500 font-bold px-3 hover:scale-110">X</button></div>`).join('');
         }
 
         function renderPesanEdit() {
             document.getElementById('pesan-list-edit').innerHTML = Object.keys(settings.pesan).map(key => `
-                <div><label class="text-[10px] font-bold text-amber-500 uppercase">${key.replace('_',' ')}</label>
-                <textarea class="msg-val w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-xs h-20 text-white" data-key="${key}">${settings.pesan[key]}</textarea></div>`).join('');
+                <div class="mb-4"><label class="text-[10px] font-bold text-amber-500 uppercase">${key.replace('_',' ')}</label>
+                <textarea class="msg-val w-full bg-gray-900 border border-gray-700 rounded-xl p-4 text-xs h-24 text-white focus:border-amber-500 focus:outline-none" data-key="${key}">${settings.pesan[key]}</textarea></div>`).join('');
         }
 
         function addLayananRow() {
-            const d = document.createElement('div'); d.className="flex gap-2"; d.innerHTML=`<input type="text" class="lay-nama bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs flex-1 text-white"><input type="number" class="lay-harga bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs w-24 text-white"><button onclick="this.parentElement.remove()" class="text-red-500 font-bold px-2">X</button>`;
+            const d = document.createElement('div'); d.className="flex gap-2"; d.innerHTML=`<input type="text" placeholder="Nama" class="lay-nama bg-gray-900 border border-gray-700 rounded-lg p-3 text-xs flex-1 text-white focus:border-amber-500 focus:outline-none"><input type="number" placeholder="Rp" class="lay-harga bg-gray-900 border border-gray-700 rounded-lg p-3 text-xs w-28 text-white focus:border-amber-500 focus:outline-none"><button onclick="this.parentElement.remove()" class="text-red-500 font-bold px-3 hover:scale-110">X</button>`;
             document.getElementById('layanan-list-edit').appendChild(d);
         }
 
         function saveSettings(type) {
             let d = (type === 'layanan') ? Array.from(document.querySelectorAll('.lay-nama')).map((n, i) => ({ nama: n.value, harga: document.querySelectorAll('.lay-harga')[i].value })) : {};
             if(type === 'pesan') document.querySelectorAll('.msg-val').forEach(t => d[t.dataset.key] = t.value);
-            fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'updateSettings', type, data: d }) }).then(() => { alert('Tersimpan!'); loadSettings(); });
+            fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'updateSettings', type, data: d }) }).then(() => { alert('Tersimpan di Spreadsheet!'); loadSettings(); });
         }
 
+        // DASHBOARD CUSTOMER LIST
         function loadDash() {
             fetch(`${API_URL}?action=getJadwal&tanggal=${getTgl(0)}`).then(r => r.json()).then(data => {
                 const list = document.getElementById('tab-customer');
-                list.innerHTML = data.filter(d => d['Status Slot'] !== 'Available').map((d, i) => `
+                list.innerHTML = data.filter(d => ['Antre','Booking', 'Diproses'].includes(d['Status Slot'])).map((d, i) => `
                     <div class="bg-gray-800 p-5 rounded-3xl border border-gray-700 flex justify-between items-center shadow-lg">
                         <div class="flex-1 text-left"><span class="text-[9px] uppercase font-black px-2 py-0.5 rounded-full bg-gray-900 ${d['Status Slot']==='Selesai'?'text-green-500':'text-amber-500'}">${d['Status Slot']}</span>
                         <p class="text-xl font-black mt-1 uppercase text-white">${d['Kode']} - ${d['Nama'] || '---'}</p>
                         <p class="text-[10px] text-gray-400 font-bold uppercase">${d['Jam']} | WA: ${d['Nomor']}</p></div>
                         <div class="flex gap-2">
-                        ${['Antre','Booking'].includes(d['Status Slot']) ? `<button onclick="actionCapster('panggil', '${d['Nomor']}', '${d['Nama']}', ${i+2})" class="bg-amber-500 text-gray-900 w-12 h-12 rounded-2xl flex items-center justify-center"><i class="fa-solid fa-microphone"></i></button>` : ''}
-                        ${d['Status Slot']==='Diproses' ? `<button onclick="openNotaModal('${d['Nomor']}', '${d['Nama']}', ${i+2})" class="bg-green-500 text-white w-12 h-12 rounded-2xl flex items-center justify-center"><i class="fa-solid fa-check text-xl"></i></button>` : ''}
-                        </div></div>`).join('');
+                        ${['Antre','Booking'].includes(d['Status Slot']) ? `<button onclick="actionCapster('panggil', '${d['Nomor']}', '${d['Nama']}')" class="bg-amber-500 text-gray-900 w-12 h-12 rounded-2xl flex items-center justify-center active:scale-95 shadow-lg"><i class="fa-solid fa-microphone"></i></button>` : ''}
+                        ${d['Status Slot']==='Diproses' ? `<button onclick="openNotaModal('${d['Nomor']}', '${d['Nama']}')" class="bg-green-500 text-white w-12 h-12 rounded-2xl flex items-center justify-center active:scale-95 shadow-lg"><i class="fa-solid fa-check text-xl"></i></button>` : ''}
+                        </div></div>`).join('') || '<p class="text-center text-gray-500 text-xs italic">Belum ada pelanggan.</p>';
             });
         }
 
-        function openNotaModal(wa, nama, row) {
-            currentSelesaiData = { wa, nama, row }; document.getElementById('modal-nota').style.display = 'flex';
+        // LOGIKA NOTA SELESAI
+        function openNotaModal(wa, nama) {
+            currentSelesaiData = { wa, nama }; document.getElementById('modal-nota').style.display = 'flex';
             document.getElementById('nota-layanan-paten').innerHTML = settings.layanan.map(l => `
-                <button onclick="toggleLayananNota(this, '${l.nama}', ${l.harga})" class="border border-gray-700 p-3 rounded-xl text-[10px] font-bold uppercase hover:bg-amber-500/20 text-white">${l.nama}<br><span class="text-amber-500">Rp ${l.harga}</span></button>`).join('');
+                <button onclick="toggleLayananNota(this, '${l.nama}', ${l.harga})" class="border border-gray-700 p-3 rounded-xl text-[10px] font-bold uppercase hover:bg-amber-500/20 text-white transition-colors">${l.nama}<br><span class="text-amber-500">Rp ${l.harga}</span></button>`).join('');
             updateNotaTotal();
         }
 
@@ -228,42 +293,73 @@
 
         function updateNotaTotal() {
             let t = selectedLayananNota.reduce((s, x) => s + parseInt(x.harga), 0) + (parseInt(document.getElementById('nota-ops-harga').value) || 0);
-            document.getElementById('nota-total-display').innerText = `Rp ${t.toLocaleString()}`;
+            document.getElementById('nota-total-display').innerText = `Rp ${t.toLocaleString('id-ID')}`;
         }
         document.getElementById('nota-ops-harga').oninput = updateNotaTotal;
 
         function confirmSelesai() {
-            let ln = selectedLayananNota.map(x => x.nama); const opsN = document.getElementById('nota-ops-nama').value; if(opsN) ln.push(opsN);
+            let ln = selectedLayananNota.map(x => x.nama); const opsN = document.getElementById('nota-ops-nama').value;
             let th = selectedLayananNota.reduce((s, x) => s + parseInt(x.harga), 0) + (parseInt(document.getElementById('nota-ops-harga').value) || 0);
-            actionCapster('selesai', currentSelesaiData.wa, currentSelesaiData.nama, currentSelesaiData.row, th, ln.join(', '));
-            closeModalNota();
+            
+            document.getElementById('btn-konfirm-nota').innerText = "MENGIRIM...";
+            actionCapster('selesai', currentSelesaiData.wa, currentSelesaiData.nama, th, ln.join(', '), opsN || "-");
         }
 
-        function actionCapster(act, wa, nama, row, total = "-", layanan = "-") {
-            fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: act, nomor: wa, nama: nama, row: row, pin: CORRECT_PIN, tanggal: getTgl(0), totalHarga: total, layananPaten: layanan }) }).then(() => { if(act==='panggil') alert('DIPANGGIL VIA WA!'); loadDash(); });
+        function actionCapster(act, wa, nama, total = "-", layanan = "-", opsional = "-") {
+            fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: act, nomor: wa, nama: nama, pin: CORRECT_PIN, tanggal: getTgl(0), totalHarga: total, layananPaten: layanan, layananOpsional: opsional }) })
+            .then(() => { 
+                if(act==='panggil') alert('PANGGILAN DIKIRIM VIA WA!'); 
+                if(act==='selesai') closeModalNota();
+                loadDash(); 
+            });
         }
 
-        function closeModalNota() { document.getElementById('modal-nota').style.display = 'none'; selectedLayananNota = []; document.getElementById('nota-ops-nama').value=""; document.getElementById('nota-ops-harga').value=""; }
-        function openModal(type) { document.getElementById('form-type').value=type; document.getElementById('modal').style.display='flex'; const sel=document.getElementById('form-tgl');
-            sel.innerHTML = (type==='antre') ? `<option value="${getTgl(0)}">${getNamaHari(0)}</option>` : `<option value="${getTgl(0)}">${getNamaHari(0)}</option><option value="${getTgl(1)}">${getNamaHari(1)}</option>`;
-            document.getElementById('booking-extra').classList.toggle('hidden', type==='antre'); }
-        function closeModal() { document.getElementById('modal').style.display='none'; }
-        
+        function closeModalNota() { 
+            document.getElementById('modal-nota').style.display = 'none'; 
+            selectedLayananNota = []; 
+            document.getElementById('nota-ops-nama').value=""; 
+            document.getElementById('nota-ops-harga').value=""; 
+            document.getElementById('btn-konfirm-nota').innerText = "Konfirmasi & Kirim WA";
+        }
+
+        // SUBMIT FORM DAFTAR (Dengan Pembersih Nomor)
         document.getElementById('form-order').onsubmit = function(e) {
             e.preventDefault(); const btn=document.getElementById('btn-submit'); btn.innerText="PROSES..."; btn.disabled=true;
-            let n = document.getElementById('form-nomor').value.replace(/[^0-9]/g, ''); if(n.startsWith('0')) n='62'+n.slice(1);
-            fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitBooking", type: document.getElementById('form-type').value, nama: document.getElementById('form-nama').value, nomor: n, jam: document.getElementById('form-jam').value, tanggal: document.getElementById('form-tgl').value, baseUrl: window.location.href.split('?')[0] }) })
-            .then(r => r.json()).then(res => { alert(`KODE: ${res.kode}`); location.reload(); }).catch(() => { alert('Gagal! Cek Deployment!'); btn.innerText="Daftar"; btn.disabled=false; });
+            
+            // Logic Auto Bersihin Nomor WA (+62 / 08 jadi 628)
+            let rawNomor = document.getElementById('form-nomor').value;
+            let cleanNomor = rawNomor.replace(/[^0-9]/g, ''); 
+            if(cleanNomor.startsWith('0')) cleanNomor = '62' + cleanNomor.slice(1);
+            if(!cleanNomor.startsWith('62')) cleanNomor = '62' + cleanNomor;
+
+            fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "submitBooking", type: document.getElementById('form-type').value, nama: document.getElementById('form-nama').value, nomor: cleanNomor, jam: document.getElementById('form-jam').value, tanggal: document.getElementById('form-tgl').value, baseUrl: window.location.href.split('?')[0] }) })
+            .then(r => r.json()).then(res => { 
+                if(res.status === 'penuh') { alert("Gagal: " + res.msg); btn.innerText="Daftar Sekarang"; btn.disabled=false; }
+                else { alert(`BERHASIL! KODE KAMU: ${res.kode}`); window.location.href = window.location.pathname; }
+            }).catch(() => { alert('Gagal! Cek Koneksi!'); btn.innerText="Daftar Sekarang"; btn.disabled=false; });
         };
-        function pressPin(num) { if(currentPin.length < 4) { currentPin += num; document.getElementById(`dot${currentPin.length}`).classList.add('bg-amber-500'); } if(currentPin.length === 4) { if(currentPin === CORRECT_PIN) showPage('page-dash'); else { alert("SALAH!"); clearPin(); } } }
+
+        // LOGIN PIN
+        function pressPin(num) { 
+            if(currentPin.length < 4) { currentPin += num; document.getElementById(`dot${currentPin.length}`).classList.add('bg-amber-500'); } 
+            if(currentPin.length === 4) { if(currentPin === CORRECT_PIN) navTo('page-dash'); else { alert("PIN SALAH!"); clearPin(); } } 
+        }
         function clearPin() { currentPin = ""; for(let i=1; i<=4; i++) document.getElementById(`dot${i}`).classList.remove('bg-amber-500'); }
         
+        // CEK STATUS CUSTOMER
         function cekStatus() { 
             const k = document.getElementById('cek-kode').value.toUpperCase(); if(!k) return;
+            const btn = event.currentTarget; btn.innerText = "...";
             fetch(`${API_URL}?action=getJadwal&tanggal=${getTgl(0)}`).then(r => r.json()).then(data => {
                 const me = data.find(d => d['Kode'] === k); const resD = document.getElementById('status-result'); const resT = document.getElementById('status-text');
-                if(!me) resT.innerText = "KODE TIDAK DITEMUKAN."; else { const idx = data.findIndex(d => d['Kode'] === k); const proc = data.findIndex(d => d['Status Slot'] === 'Diproses');
-                resT.innerText = `STATUS: ${me['Status Slot']}. SISA: ${proc===-1?idx:idx-proc} ORANG.`; } resD.classList.remove('hidden');
+                if(!me) resT.innerText = "KODE TIDAK DITEMUKAN."; else { 
+                    const idx = data.findIndex(d => d['Kode'] === k); 
+                    const proc = data.findIndex(d => d['Status Slot'] === 'Diproses');
+                    let sisa = proc === -1 ? idx : idx - proc;
+                    if (sisa < 0) sisa = 0;
+                    resT.innerText = `STATUS: ${me['Status Slot']}. SISA: ${sisa} ORANG.`; 
+                } 
+                resD.classList.remove('hidden'); btn.innerText = "CEK";
             });
         }
     </script>
